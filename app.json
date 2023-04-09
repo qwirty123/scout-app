@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "1661 Scouting App",
+    "icon": "./assets/android-icon-192x192.png",
+    "version": "1.0.0",
+    "slug": "Scouting-App",
+    "ios": {
+      "bundleIdentifier": "com.team1661.ScoutApp2",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.team1661.ScoutApp2",
+      "versionCode": 1
+    },
+    "extra": {
+      "eas": {
+        "projectId": "cbac5e91-301a-4cf5-8a82-96890557dd35"
+      }
+    }
+  }
+}
