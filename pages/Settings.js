@@ -20,7 +20,7 @@ export function getUsername() {
 }
 export function setUsername(x) {
     // DO NOT USE THIS, only for this one specific purpose
-    serverURL = x
+    username = x
 }
 
 
