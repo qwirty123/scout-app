@@ -1,6 +1,6 @@
 import { ScrollView, View } from "react-native";
-import { Text, Divider, HelperText, Snackbar, IconButton } from "react-native-paper";
-import React from 'react'
+import { Text, Divider, HelperText, Snackbar, IconButton, Portal, Modal, Button } from "react-native-paper";
+import React, { useState } from 'react'
 
 import { GenerateJSXQuestions } from "./QuestionJSXGenerator";
 import { TeamNumInput, SubmitButton } from "./QuestionComponents";
@@ -18,7 +18,7 @@ let regenerateUniqueKey = () => uniqueKey = (Math.random())
 
 export function Scout({scheme, meta, teamData, usernameSupplier}) {
     let forceRerender = useForceUpdate()
-
+    
     let theme = useContext(ThemeContext)
     theme.updaters.push(forceRerender)
     theme = theme.theme.colors
@@ -42,9 +42,7 @@ export function Scout({scheme, meta, teamData, usernameSupplier}) {
     const [missingUsernameSnackbar, changeUsernameSnackbar] = React.useState(false)
     const [finishedSubmitting, changeFinishedSubmitting] = React.useState(false)
     const [errSubmitting, changeErrSubmitting] = React.useState(false)
-
-
-
+    const [showingClearConfirm, changeClearConfirm] = React.useState(false)
 
     function submit() {
         console.log("submitted")
@@ -87,10 +85,34 @@ export function Scout({scheme, meta, teamData, usernameSupplier}) {
     
 
     return (
+        <View>
+            <Portal>
+                <Modal visible={showingClearConfirm} 
+                onDismiss={() => {
+                    changeClearConfirm(false)
+                }}
+                contentContainerStyle={{backgroundColor: theme.surface, width: "70%", height: "20%", alignSelf: "center", padding: 15, borderColor: theme.error, borderWidth: 2, borderRadius: 15}}>
+
+                    <Text style={{color: theme.onSurface, marginBottom: 30, alignSelf: "center", fontSize: 17, overflow: "scroll"}}>
+                        Are you sure you want to clear?
+                    </Text>
+
+                    <Button onPress={() => {
+                        changeClearConfirm(false)
+                        regenerateUniqueKey();
+                        forceRerender()
+                    }} 
+                    style={{backgroundColor: theme.errorContainer, borderWidth: 2, borderColor: theme.outline, width: "80%", marginLeft: "10%"}}>
+                        <Text style={{color: theme.onErrorContainer}}>Clear</Text>
+                    </Button>
+                </Modal>
+            </Portal>
         <ScrollView style={{overflow: "scroll", backgroundColor: theme.background}} key={uniqueKey}>
             <View style={{width: "80%", marginLeft: "10%", marginTop: 70}}>
                     <Text variant="headlineLarge" style={{alignSelf: "flex-start", fontWeight: "bold", width: "50%", color: theme.primary}}>{meta.name}</Text>
-                    <IconButton style={{alignSelf: "flex-end", position: "absolute", top: -10}} icon="delete-circle" size={45} iconColor="#e8593c" onPress={() => {regenerateUniqueKey(); forceRerender()} } />
+                    <IconButton style={{alignSelf: "flex-end", position: "absolute", top: -10}} icon="delete-circle" size={45} iconColor="#e8593c" onPress={() => {
+                        changeClearConfirm(true)
+                    }} />
 
                 <Text variant="bodySmall" style={{fontWeight: "bold", marginTop: 10, color: theme.onBackground}}>{meta.key}</Text>
             </View>
@@ -104,6 +126,7 @@ export function Scout({scheme, meta, teamData, usernameSupplier}) {
             <Snackbar visible={finishedSubmitting}>Success!</Snackbar>
             <Snackbar visible={errSubmitting}><Text style={{color: "red", fontWeight: "bold"}}>Error Submitting!</Text></Snackbar>
         </ScrollView>
+        </View>
     )
     //console.log(scheme, meta, teamData)
 }
